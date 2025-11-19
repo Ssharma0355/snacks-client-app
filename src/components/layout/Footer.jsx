@@ -8,8 +8,9 @@ const Footer = () => {
 
         {/* Brand Section */}
         <div>
-          <h2 className="text-2xl font-bold text-brand-700">SnackWala 🍪</h2>
+          <h2 className="text-2xl font-bold text-brand-700">Makhnaa 🍪</h2>
           <p className="mt-3 text-sm leading-6 text-slate-600">
+            <h1>Founder: Varsha Singh</h1>
             Authentic Bihari Thekua, Namkeen, Makhana & more —  
             delivering traditional taste to your home.
           </p>
@@ -66,7 +67,7 @@ const Footer = () => {
       {/* Bottom Bar */}
       <div className="border-t border-orange-200 mt-6">
         <p className="text-center text-sm py-4">
-          © {new Date().getFullYear()} SnackWala. All rights reserved.
+          © {new Date().getFullYear()} Makhnaa. All rights reserved.
         </p>
       </div>
     </footer>

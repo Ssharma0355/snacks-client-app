@@ -36,7 +36,7 @@ export default function Navbar() {
               to="/"
               className="text-2xl font-extrabold text-blue-600 tracking-wider hover:text-blue-700 transition duration-150"
             >
-              Varsha Snacks 🍪
+              Makhnaa! 🍪
             </Link>
           </div>
 
