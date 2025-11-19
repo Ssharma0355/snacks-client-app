@@ -1,65 +1,132 @@
 import React, { useState } from "react";
 import Modal from "../ui/Modal";
 import { useAuth } from "../../context/AuthContext";
+import { IoClose } from "react-icons/io5";
 
-export default function AuthModal({ open, onClose, mode = "login" }){
+export default function AuthModal({ open, onClose, mode = "login" }) {
   const { login } = useAuth();
-  const [step, setStep] = useState("form"); // form -> otp
+  const [step, setStep] = useState("form");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
 
   const sendOtp = (e) => {
-    e?.preventDefault();
-    // In prod: call backend to send OTP. Here we mock and move to OTP screen
+    e.preventDefault();
     setStep("otp");
   };
 
   const verifyOtp = (code) => {
-    // accept "0000" as valid
-    if(code === "0000"){
+    if (code === "0000") {
       login({ name: name || "Guest", email });
       onClose();
       setStep("form");
     } else {
-      alert("Invalid OTP. (Hint: use 0000)");
+      alert("Invalid OTP (Use 0000)");
     }
   };
 
   return (
-    <Modal open={open} onClose={() => { onClose(); setStep("form"); }}>
+    <Modal
+      open={open}
+      onClose={() => {
+        onClose();
+        setStep("form");
+      }}
+      size="max-w-md"
+    >
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold text-slate-800 dark:text-white">
+          {step === "form"
+            ? mode === "signup"
+              ? "Create Account"
+              : "Welcome Back"
+            : "Verify OTP"}
+        </h2>
+
+        <button onClick={onClose} className="text-slate-500 hover:text-black">
+          <IoClose size={26} />
+        </button>
+      </div>
+
+      {/* Step Form */}
       {step === "form" ? (
-        <form onSubmit={sendOtp} className="space-y-4">
+        <form onSubmit={sendOtp} className="space-y-5">
           {mode === "signup" && (
-            <input required value={name} onChange={e=>setName(e.target.value)}
-              className="w-full p-3 rounded-md border" placeholder="Full name" />
+            <div>
+              <label className="text-sm font-medium text-slate-600">
+                Full Name
+              </label>
+              <input
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full p-3 mt-1 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"
+                placeholder="Your Name"
+              />
+            </div>
           )}
-          <input required value={email} onChange={e=>setEmail(e.target.value)}
-            className="w-full p-3 rounded-md border" placeholder="Email or phone" />
-          <div className="flex gap-2">
-            <button className="flex-1 py-2 rounded-md bg-brand-500 text-white">Send OTP</button>
-            <button type="button" className="py-2 px-3 rounded-md border" onClick={onClose}>Cancel</button>
+
+          {/* Email / Phone */}
+          <div>
+            <label className="text-sm font-medium text-slate-600">
+              Email or Phone
+            </label>
+            <input
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 mt-1 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"
+              placeholder="example@gmail.com"
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3 pt-2">
+            <button className="flex-1 py-3 bg-brand-500 text-white font-medium rounded-lg hover:bg-brand-700 transition">
+              Send OTP
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-3 border border-slate-300 rounded-lg hover:bg-slate-100 transition"
+            >
+              Cancel
+            </button>
           </div>
         </form>
       ) : (
-        <div className="space-y-4">
-          <p>Enter the 4-digit OTP (use <strong>0000</strong> for now)</p>
-          <OTPInput onVerify={verifyOtp} />
-        </div>
+        <OtpScreen onVerify={verifyOtp} email={email} />
       )}
     </Modal>
   );
 }
 
-// simple OTP input
-function OTPInput({ onVerify }){
+// ------------------- OTP COMPONENT -------------------
+function OtpScreen({ onVerify, email }) {
   const [code, setCode] = useState("");
+
   return (
-    <div className="space-y-2">
-      <input value={code} onChange={e=>setCode(e.target.value.replace(/\D/g,""))}
-        maxLength={4} className="w-full p-3 border rounded-md text-center text-xl" />
-      <div className="flex gap-2">
-        <button onClick={()=>onVerify(code)} className="flex-1 py-2 rounded-md bg-brand-500 text-white">Verify</button>
-      </div>
+    <div className="space-y-5">
+      <p className="text-slate-700 text-sm">
+        Enter the 4-digit OTP sent to  
+        <strong className="block text-brand-700">{email}</strong>  
+        (Use 0000 for now)
+      </p>
+
+      <input
+        value={code}
+        onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+        maxLength={4}
+        className="w-full p-4 border border-slate-300 rounded-lg text-center text-2xl tracking-widest focus:ring-2 focus:ring-brand-500 outline-none"
+      />
+
+      <button
+        onClick={() => onVerify(code)}
+        className="w-full py-3 bg-brand-500 text-white font-semibold rounded-lg hover:bg-brand-700 transition"
+      >
+        Verify OTP
+      </button>
     </div>
   );
 }
